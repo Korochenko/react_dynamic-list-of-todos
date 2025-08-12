@@ -6,7 +6,7 @@ interface TodoListProps {
   onTodoSelect: (userId: number) => void;
 }
 
-export const TodoList: React.FC<TodoListProps> = ({ todos, onTodoSelect}) => (
+export const TodoList: React.FC<TodoListProps> = ({ todos, onTodoSelect }) => (
   <table className="table is-narrow is-fullwidth">
     <thead>
       <tr>
@@ -25,7 +25,11 @@ export const TodoList: React.FC<TodoListProps> = ({ todos, onTodoSelect}) => (
       {todos.map(todo => (
         <tr
           key={todo.id}
-          className={todo.completed ? 'has-background-success-light' : 'has-background-info-light'}
+          className={
+            todo.completed
+              ? 'has-background-success-light'
+              : 'has-background-info-light'
+          }
           data-cy="todo"
         >
           <td className="is-vcentered">{todo.id}</td>
@@ -37,7 +41,11 @@ export const TodoList: React.FC<TodoListProps> = ({ todos, onTodoSelect}) => (
             )}
           </td>
           <td className="is-vcentered is-expanded">
-            <p className={todo.completed ? 'has-text-success' : 'has-text-danger'}>
+            <p
+              className={
+                todo.completed ? 'has-text-success' : 'has-text-danger'
+              }
+            >
               {todo.title}
             </p>
           </td>
@@ -49,7 +57,9 @@ export const TodoList: React.FC<TodoListProps> = ({ todos, onTodoSelect}) => (
               onClick={() => onTodoSelect(todo.userId)}
             >
               <span className="icon">
-                <i className={todo.completed ? 'far fa-eye' : 'far fa-eye-slash'} />
+                <i
+                  className={todo.completed ? 'far fa-eye' : 'far fa-eye-slash'}
+                />
               </span>
             </button>
           </td>

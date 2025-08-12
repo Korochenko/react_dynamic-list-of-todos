@@ -31,13 +31,14 @@ export const App: React.FC = () => {
 
   const handleUserFetch = (userId: number) => {
     setLoadingUser(true);
-    
+
     // Find the todo by userId
     const todo = todos.find(t => t.userId === userId);
+
     if (todo) {
       setSelectedTodo(todo);
     }
-    
+
     getUser(userId)
       .then(data => {
         setUser(data);
@@ -60,7 +61,9 @@ export const App: React.FC = () => {
 
             <div className="block">
               {loading && <Loader />}
-              {!loading && <TodoList todos={todos} onTodoSelect={handleUserFetch} />}
+              {!loading && (
+                <TodoList todos={todos} onTodoSelect={handleUserFetch} />
+              )}
             </div>
           </div>
         </div>

@@ -10,9 +10,12 @@ interface TodoModalProps {
   onClose: () => void;
 }
 
-export const TodoModal: React.FC<TodoModalProps> = (
-  { selectedTodo, user, loadingUser, onClose }
-) => {
+export const TodoModal: React.FC<TodoModalProps> = ({
+  selectedTodo,
+  user,
+  loadingUser,
+  onClose,
+}) => {
   if (!selectedTodo) {
     return null;
   }
@@ -38,7 +41,8 @@ export const TodoModal: React.FC<TodoModalProps> = (
               type="button"
               className="delete"
               data-cy="modal-close"
-              onClick={onClose} />
+              onClick={onClose}
+            />
           </header>
 
           <div className="modal-card-body">
@@ -48,8 +52,14 @@ export const TodoModal: React.FC<TodoModalProps> = (
 
             <p className="block" data-cy="modal-user">
               {/* <strong className="has-text-success">Done</strong> */}
-              <strong className={selectedTodo.completed ? "has-text-success" : "has-text-danger"}>
-                {selectedTodo.completed ? "Done" : "Planned"}
+              <strong
+                className={
+                  selectedTodo.completed
+                    ? 'has-text-success'
+                    : 'has-text-danger'
+                }
+              >
+                {selectedTodo.completed ? 'Done' : 'Planned'}
               </strong>
 
               {' by '}
