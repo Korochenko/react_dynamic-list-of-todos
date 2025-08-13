@@ -16,37 +16,75 @@ export const App: React.FC = () => {
   const [loadingUser, setLoadingUser] = React.useState(false);
   const [todos, setTodos] = React.useState<Todo[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [filterStatus, setFilterStatus] = React.useState<
+    'all' | 'active' | 'completed'
+  >('all');
+  const [filterQuery, setFilterQuery] = React.useState('');
   const [user, setUser] = React.useState<User | null>(null);
-  const [selectedTodo, setSelectedTodo] = React.useState<Todo | null>(null); // Added missing state
+  const [selectedTodo, setSelectedTodo] = React.useState<Todo | null>(null);
 
   useEffect(() => {
     getTodos()
       .then(data => {
         setTodos(data);
       })
+      .catch(() => {
+        // Handle error silently or add error display logic if needed
+      })
       .finally(() => {
         setLoading(false);
       });
   }, []);
 
-  const handleUserFetch = (userId: number) => {
+  const handleTodoSelect = (todoId: number) => {
     setLoadingUser(true);
 
-    // Find the todo by userId
-    const todo = todos.find(t => t.userId === userId);
+    // Find the specific todo by its ID
+    const todo = todos.find(t => t.id === todoId);
 
     if (todo) {
       setSelectedTodo(todo);
-    }
 
-    getUser(userId)
-      .then(data => {
-        setUser(data);
-      })
-      .finally(() => {
-        setLoadingUser(false);
-      });
+      getUser(todo.userId)
+        .then(data => {
+          setUser(data);
+        })
+        .catch(() => {
+          // Handle error silently or add error display logic if needed
+        })
+        .finally(() => {
+          setLoadingUser(false);
+        });
+    } else {
+      setLoadingUser(false);
+    }
   };
+
+  const handleFilterChange = (
+    status: 'all' | 'active' | 'completed',
+    query: string,
+  ) => {
+    setFilterStatus(status);
+    setFilterQuery(query);
+  };
+
+  // Apply filters to todos
+  const filteredTodos = React.useMemo(() => {
+    return todos.filter(todo => {
+      // Filter by status
+      const statusMatch =
+        filterStatus === 'all' ||
+        (filterStatus === 'completed' && todo.completed) ||
+        (filterStatus === 'active' && !todo.completed);
+
+      // Filter by title (case-insensitive)
+      const titleMatch =
+        filterQuery.trim() === '' ||
+        todo.title.toLowerCase().includes(filterQuery.toLowerCase().trim());
+
+      return statusMatch && titleMatch;
+    });
+  }, [todos, filterStatus, filterQuery]);
 
   return (
     <>
@@ -56,28 +94,38 @@ export const App: React.FC = () => {
             <h1 className="title">Todos:</h1>
 
             <div className="block">
-              <TodoFilter />
+              <TodoFilter
+                status={filterStatus}
+                query={filterQuery}
+                onFilterChange={handleFilterChange}
+              />
             </div>
 
             <div className="block">
               {loading && <Loader />}
               {!loading && (
-                <TodoList todos={todos} onTodoSelect={handleUserFetch} />
+                <TodoList
+                  todos={filteredTodos}
+                  onTodoSelect={handleTodoSelect}
+                />
               )}
             </div>
           </div>
         </div>
       </div>
 
-      <TodoModal
-        selectedTodo={selectedTodo}
-        user={user}
-        loadingUser={loadingUser}
-        onClose={() => {
-          setSelectedTodo(null);
-          setUser(null);
-        }}
-      />
+      {selectedTodo && (
+        <TodoModal
+          selectedTodo={selectedTodo}
+          user={user}
+          loadingUser={loadingUser}
+          onClose={() => {
+            setSelectedTodo(null);
+            setUser(null);
+            setLoadingUser(false);
+          }}
+        />
+      )}
     </>
   );
 };

@@ -3,7 +3,7 @@ import { Todo } from '../../types/Todo';
 
 interface TodoListProps {
   todos: Todo[];
-  onTodoSelect: (userId: number) => void;
+  onTodoSelect: (todoId: number) => void; // Changed to todoId instead of userId
 }
 
 export const TodoList: React.FC<TodoListProps> = ({ todos, onTodoSelect }) => (
@@ -54,7 +54,7 @@ export const TodoList: React.FC<TodoListProps> = ({ todos, onTodoSelect }) => (
               data-cy="selectButton"
               className="button"
               type="button"
-              onClick={() => onTodoSelect(todo.userId)}
+              onClick={() => onTodoSelect(todo.id)} // Changed to todo.id
             >
               <span className="icon">
                 <i
